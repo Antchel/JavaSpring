@@ -1,20 +1,15 @@
 package com.agolovenko.jspring.OSM.OSMStat;
 
 import com.agolovenko.jspring.OSM.Parser.IStAXAPIParser;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
+@AllArgsConstructor
 public class OSMStatistics {
-
     private final IStAXAPIParser parser;
-
-    @Autowired
-    OSMStatistics(IStAXAPIParser parser) {
-        this.parser = parser;
-    }
 
     public void printOrderedByKeyName() {
         parser.getElements().entrySet()

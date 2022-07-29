@@ -3,8 +3,10 @@ package com.agolovenko.jspring.OSM.ParserImpl;
 import ch.qos.logback.classic.Level;
 import com.agolovenko.jspring.OSM.Parser.IStAXAPIParser;
 import com.agolovenko.jspring.OSM.ParserImpl.OSMDataCursorParser;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -21,11 +23,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @Component
-public class OSMDataIteratorParser implements IStAXAPIParser {
+@Slf4j
+@ConditionalOnProperty(
+        value="parser.cursor.enabled",
+        havingValue = "false"
+)
 
-    private final Logger logger = LoggerFactory.getLogger(OSMDataCursorParser.class);
-    final ch.qos.logback.classic.Logger logger2 =
-            (ch.qos.logback.classic.Logger) logger;
+public class OSMDataIteratorParser implements IStAXAPIParser {
 
     private static final Map<String, Integer> elements = new TreeMap<>();
     private XMLEventReader xmlEventReader;
@@ -38,7 +42,7 @@ public class OSMDataIteratorParser implements IStAXAPIParser {
     @Override
     public void parseXML(InputStream XMLDataStream) throws XMLStreamException {
         initParser(XMLDataStream);
-        logger2.setLevel(Level.INFO);
+        ((ch.qos.logback.classic.Logger) log).setLevel(Level.INFO);
         XMLFinish:
         while (xmlEventReader.hasNext()) {
             XMLEvent xmlEvent;
@@ -48,11 +52,11 @@ public class OSMDataIteratorParser implements IStAXAPIParser {
                 throw new RuntimeException(e);
             }
             switch (xmlEvent.getEventType()) {
-                case XMLStreamConstants.START_DOCUMENT -> logger.info("XMLEvent.START_DOCUMENT");
+                case XMLStreamConstants.START_DOCUMENT -> log.info("XMLEvent.START_DOCUMENT");
                 case XMLStreamConstants.START_ELEMENT -> {
                     StartElement startElement = xmlEvent.asStartElement();
                     if ((startElement.getName().toString()).equals("way") || startElement.getName().toString().equals("relation")) {
-                        logger.info("Elements camount is " + elements.size());
+                        log.info("Elements camount is " + elements.size());
                         break XMLFinish;
                     }
                     if (startElement.getName().toString().equals("node")) {
@@ -70,7 +74,7 @@ public class OSMDataIteratorParser implements IStAXAPIParser {
                                 else elements.put(attrName, 1);
                             }
                             if (xmlEvent.getEventType() == XMLStreamConstants.END_ELEMENT && startElement.getName().toString().equals("node")) {
-                                logger.debug("XMLStream.END_ELEMENT <node\\>");
+                                log.debug("XMLStream.END_ELEMENT <node\\>");
                                 break;
                             }
                         }
@@ -78,11 +82,11 @@ public class OSMDataIteratorParser implements IStAXAPIParser {
                 }
                 case XMLStreamConstants.END_ELEMENT -> {
                     EndElement endElement = xmlEvent.asEndElement();
-                    logger.debug("XMLEvent1.END_ELEMENT:   </" + endElement.getName() + ">");
+                    log.debug("XMLEvent1.END_ELEMENT:   </" + endElement.getName() + ">");
                 }
                 case XMLStreamConstants.END_DOCUMENT ->
-                        logger.info("XMLEvent.END_DOCUMENT " + elements.size() + " elements");
-                default -> logger.debug("case default: Event Type = " + xmlEvent.getEventType());
+                        log.info("XMLEvent.END_DOCUMENT " + elements.size() + " elements");
+                default -> log.debug("case default: Event Type = " + xmlEvent.getEventType());
             }
         }
     }

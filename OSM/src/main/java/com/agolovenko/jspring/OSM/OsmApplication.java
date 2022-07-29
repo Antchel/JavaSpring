@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import javax.xml.stream.XMLStreamException;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -25,8 +26,9 @@ public class OsmApplication {
         return args -> {
             CommandLineOptionsHandler cmdHandler = new CommandLineOptionsHandler(args);
             String filePath = "";
-            try (BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream(
-                    new BufferedInputStream(Files.newInputStream(Paths.get(cmdHandler.getOptionByName("f", filePath))), BUFF_SIZE))) {
+            try (InputStream in = Files.newInputStream(Paths.get(cmdHandler.getOptionByName("f", filePath)));
+                 BufferedInputStream bin = new BufferedInputStream(in, BUFF_SIZE);
+                 BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream(bin)) {
 
                 osmDataParser.parseXML(bzIn);
                 statistic.printOrderedByKeyRepetition();
