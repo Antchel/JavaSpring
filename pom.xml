@@ -6,7 +6,11 @@
 
     <groupId>groupId</groupId>
     <artifactId>task-1</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>JAXB-OSM</module>
+        <module>OSM</module>
+    </modules>
 
-    
 </project>
