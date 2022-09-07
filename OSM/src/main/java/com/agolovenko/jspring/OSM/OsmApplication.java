@@ -41,7 +41,7 @@ public class OsmApplication {
 
     @Bean
     CommandLineRunner processXML(IStAXAPIParser osmDataParser, OSMStatistics statistic,
-                                 @Qualifier("simpleUserService")
+                                 @Qualifier("copyService")
                                  NodeService userService) {
         return args -> {
             CommandLineOptionsHandler cmdHandler = new CommandLineOptionsHandler(args);

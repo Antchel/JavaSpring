@@ -56,16 +56,6 @@ public class NodeCopyServiceDAO extends AbstractNodeServiceDAO{
 
         csvWriter.writeNext(new String[]{nodeInfo.getId().toString(), nodeInfo.getLat().toString(), nodeInfo.getLon().toString(), jsonString});
 
-//        List<Tag> participantJsonList;
-//        try {
-//            participantJsonList = objectMapper.readValue(jsonString, new TypeReference<>() {
-//            });
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//        if (participantJsonList.size() > 0) {
-//            System.out.println(participantJsonList);
-//        }
     }
 
     protected Connection getConnection() throws SQLException {
