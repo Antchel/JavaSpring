@@ -1,12 +1,9 @@
 package com.agolovenko.jspring.OSM.ParserImpl;
 
-import ch.qos.logback.classic.Level;
+import com.agolovenko.jspring.OSM.DB.NodeService;
 import com.agolovenko.jspring.OSM.Parser.IStAXAPIParser;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.xml.stream.XMLInputFactory;
@@ -19,9 +16,9 @@ import java.util.TreeMap;
 
 @Component
 @ConditionalOnProperty(
-        value="parser.cursor.enabled",
-        havingValue = "true",
-        matchIfMissing = true)
+        value="parser.type.selected",
+        havingValue = "cursor"
+)
 
 @Slf4j
 public class OSMDataCursorParser implements IStAXAPIParser {
@@ -38,7 +35,6 @@ public class OSMDataCursorParser implements IStAXAPIParser {
     @Override
     public void parseXML(InputStream XMLDataStream) throws XMLStreamException {
         initParser(XMLDataStream);
-        ((ch.qos.logback.classic.Logger) log).setLevel(Level.INFO);
 
         XMLFINISH:
         while (true) {
@@ -80,6 +76,12 @@ public class OSMDataCursorParser implements IStAXAPIParser {
             }
         }
     }
+
+    @Override
+    public void parseXMLAndWriteToDB(InputStream XMLDataStream, NodeService nodeService) {
+
+    }
+
     @Override
     public Map<String, Integer> getElements() {
         return elements;

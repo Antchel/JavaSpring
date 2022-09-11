@@ -1,13 +1,9 @@
 package com.agolovenko.jspring.OSM.ParserImpl;
 
-import ch.qos.logback.classic.Level;
+import com.agolovenko.jspring.OSM.DB.NodeService;
 import com.agolovenko.jspring.OSM.Parser.IStAXAPIParser;
-import com.agolovenko.jspring.OSM.ParserImpl.OSMDataCursorParser;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.xml.namespace.QName;
@@ -25,8 +21,8 @@ import java.util.TreeMap;
 @Component
 @Slf4j
 @ConditionalOnProperty(
-        value="parser.cursor.enabled",
-        havingValue = "false"
+        value = "parser.type.selected",
+        havingValue = "event"
 )
 
 public class OSMDataIteratorParser implements IStAXAPIParser {
@@ -42,7 +38,6 @@ public class OSMDataIteratorParser implements IStAXAPIParser {
     @Override
     public void parseXML(InputStream XMLDataStream) throws XMLStreamException {
         initParser(XMLDataStream);
-        ((ch.qos.logback.classic.Logger) log).setLevel(Level.INFO);
         XMLFinish:
         while (xmlEventReader.hasNext()) {
             XMLEvent xmlEvent;
@@ -56,7 +51,8 @@ public class OSMDataIteratorParser implements IStAXAPIParser {
                 case XMLStreamConstants.START_ELEMENT -> {
                     StartElement startElement = xmlEvent.asStartElement();
                     if ((startElement.getName().toString()).equals("way") || startElement.getName().toString().equals("relation")) {
-                        log.info("Elements camount is " + elements.size());
+                        log.info("Elements amount is " + elements.size());
+
                         break XMLFinish;
                     }
                     if (startElement.getName().toString().equals("node")) {
@@ -90,6 +86,12 @@ public class OSMDataIteratorParser implements IStAXAPIParser {
             }
         }
     }
+
+    @Override
+    public void parseXMLAndWriteToDB(InputStream XMLDataStream, NodeService nodeService) {
+
+    }
+
     @Override
     public Map<String, Integer> getElements() {
         return elements;
