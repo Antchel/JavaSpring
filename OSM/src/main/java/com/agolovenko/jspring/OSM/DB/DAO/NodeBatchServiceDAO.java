@@ -62,6 +62,12 @@ public class NodeBatchServiceDAO extends AbstractNodeServiceDAO implements AutoC
 
 
         } catch (SQLException | JsonProcessingException sqlex) {
+            try {
+                if (con != null)
+                    con.rollback();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             throw new UserServiceException("Can't create node", sqlex);
         }
     }
