@@ -4,6 +4,7 @@ import com.agolovenko.jspring.OSM.TimeTrack.TimeTracker;
 import com.agolovenko.jspring.osmjaxbclasses.Node;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVWriter;
+import lombok.SneakyThrows;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,18 +30,21 @@ public class NodeCopyServiceDAO extends AbstractNodeServiceDAO{
     private final CSVWriter csvWriter;
     private final String TEMP_FILE = "c:\\Work\\table.csv";
 
+    @SneakyThrows
     public NodeCopyServiceDAO(DataSource dataSource) throws IOException {
         this.dataSource = dataSource;
+        con = getConnection();
         try {
-            con = getConnection();
             cpm = new CopyManager(con.unwrap(BaseConnection.class));
             FileWriter fileWriter = new FileWriter(TEMP_FILE);
             csvWriter = new CSVWriter(fileWriter);
         } catch (SQLException e) {
+            con.rollback();
             throw new RuntimeException(e);
         }
     }
 
+    @SneakyThrows
     @Override
     @TimeTracker
     public void createNode(Node nodeInfo) {
@@ -51,21 +55,12 @@ public class NodeCopyServiceDAO extends AbstractNodeServiceDAO{
             new ObjectMapper().writer().writeValue(sw, nodeInfo.getTag());
             jsonString = sw.toString();
         } catch (IOException e) {
+            con.rollback();
             throw new RuntimeException(e);
         }
 
         csvWriter.writeNext(new String[]{nodeInfo.getId().toString(), nodeInfo.getLat().toString(), nodeInfo.getLon().toString(), jsonString});
 
-//        List<Tag> participantJsonList;
-//        try {
-//            participantJsonList = objectMapper.readValue(jsonString, new TypeReference<>() {
-//            });
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//        if (participantJsonList.size() > 0) {
-//            System.out.println(participantJsonList);
-//        }
     }
 
     protected Connection getConnection() throws SQLException {

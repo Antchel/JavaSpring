@@ -1,7 +1,7 @@
 package com.agolovenko.jspring.OSM.ParserImpl;
 
 import com.agolovenko.jspring.OSM.DB.NodeService;
-import com.agolovenko.jspring.OSM.DB.UserServiceException;
+import com.agolovenko.jspring.OSM.DB.NodeServiceException;
 import com.agolovenko.jspring.OSM.Parser.IStAXAPIParser;
 import com.agolovenko.jspring.osmjaxbclasses.Node;
 import com.agolovenko.jspring.osmjaxbclasses.ObjectFactory;
@@ -133,7 +133,7 @@ public class OSMEventJaxbParser implements IStAXAPIParser {
                         Node response = element.getValue();
                         try {
                             nodeService.createNode(response);
-                        } catch (UserServiceException e) {
+                        } catch (NodeServiceException e) {
                             throw new RuntimeException(e);
                         }
                         for (int i = 0; i < response.getTag().size(); i++) {

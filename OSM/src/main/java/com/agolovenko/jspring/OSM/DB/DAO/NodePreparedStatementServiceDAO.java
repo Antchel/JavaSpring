@@ -1,11 +1,12 @@
 package com.agolovenko.jspring.OSM.DB.DAO;
 
-import com.agolovenko.jspring.OSM.DB.UserServiceException;
+import com.agolovenko.jspring.OSM.DB.NodeServiceException;
 import com.agolovenko.jspring.OSM.TimeTrack.TimeTracker;
 import com.agolovenko.jspring.OSM.Util.Reference;
 import com.agolovenko.jspring.osmjaxbclasses.Node;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,21 +31,23 @@ public class NodePreparedStatementServiceDAO extends AbstractNodeServiceDAO {
     PreparedStatement st;
     private int counter = 0;
 
+    @SneakyThrows
     public NodePreparedStatementServiceDAO(@Qualifier("userDataSource") DataSource dataSource) {
         this.dataSource = dataSource;
+        con = getConnection();
         try {
-            con = getConnection();
             con.setAutoCommit(false);
             st = con.prepareStatement("insert into node (node_id, lat, lon, tags) " +
-                    "values (?,?,?,?::json)", getKeyColumns());
+                    "values (?,?,?,?::json)", KEY_COLUMNS);
         } catch (SQLException e) {
+            con.rollback();
             throw new RuntimeException(e);
         }
     }
 
     @Override
     @TimeTracker
-    public void createNode(Node nodeInfo) throws UserServiceException {
+    public void createNode(Node nodeInfo) throws NodeServiceException {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -58,7 +61,7 @@ public class NodePreparedStatementServiceDAO extends AbstractNodeServiceDAO {
                 CommitToDB();
             }
         } catch (SQLException sqlex) {
-            throw new UserServiceException("Can't create node", sqlex);
+            throw new NodeServiceException("Can't create node", sqlex);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
