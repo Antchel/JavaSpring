@@ -29,23 +29,23 @@ import java.util.TreeMap;
 )
 public class OSMCursorJaxbParser implements IStAXAPIParser {
     private static final Map<String, Integer> elements = new TreeMap<>();
+    private final XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
     private XMLStreamReader xmlStreamReader;
+    private Unmarshaller um;
 
     private void initParser(InputStream XMLDataStream) throws XMLStreamException {
-        XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
-        xmlStreamReader = xmlInputFactory.createXMLStreamReader(XMLDataStream);
-    }
-
-    @Override
-    public void parseXML(InputStream XMLDataStream) throws XMLStreamException {
-        initParser(XMLDataStream);
-        Unmarshaller um;
         try {
             JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
             um = jc.createUnmarshaller();
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
+        xmlStreamReader = xmlInputFactory.createXMLStreamReader(XMLDataStream);
+    }
+
+    @Override
+    public void parseXML(InputStream XMLDataStream) throws XMLStreamException {
+        initParser(XMLDataStream);
 
         XMLFINISH:
         while (true) {
@@ -91,13 +91,7 @@ public class OSMCursorJaxbParser implements IStAXAPIParser {
     public void parseXMLAndWriteToDB(InputStream XMLDataStream,
                                      NodeService nodeService) throws XMLStreamException {
         initParser(XMLDataStream);
-        Unmarshaller um;
-        try {
-            JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
-            um = jc.createUnmarshaller();
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
+
         boolean running = true;
         XMLFINISH:
         while (running) {
@@ -122,13 +116,6 @@ public class OSMCursorJaxbParser implements IStAXAPIParser {
                             }
                             Node response = element.getValue();
                             nodeService.createNode(response);
-
-//                            for (int i = 0; i < response.getTag().size(); i++) {
-//                                String key = response.getTag().get(i).getK();
-//                                if (elements.containsKey(key))
-//                                    elements.put(key, elements.get(key) + 1);
-//                                else elements.put(key, 1);
-//                            }
                         }
                     }
                     case XMLStreamConstants.END_ELEMENT ->
