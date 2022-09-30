@@ -37,28 +37,28 @@ public class OsmApplication {
         log.debug("userDataSource created");
         return ds;
     }
-    private final int BUFF_SIZE = 32786;
-
-    @Bean
-    CommandLineRunner processXML(IStAXAPIParser osmDataParser, OSMStatistics statistic,
-                                 @Qualifier("copyService")
-                                 NodeService userService) {
-        return args -> {
-            CommandLineOptionsHandler cmdHandler = new CommandLineOptionsHandler(args);
-            ((ch.qos.logback.classic.Logger) log).setLevel(Level.ALL);
-            String filePath = "C:\\Users\\agolovenko\\Downloads\\ural-fed-district-latest.osm.bz2";
-            try (InputStream in = Files.newInputStream(Paths.get(cmdHandler.getOptionByName("f", filePath)));
-                 BufferedInputStream bin = new BufferedInputStream(in, BUFF_SIZE);
-                 BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream(bin)) {
-
-                osmDataParser.parseXMLAndWriteToDB(bzIn, userService);
-                statistic.printOrderedByKeyRepetition();
-
-            } catch (ParseException | IOException e) {
-                throw new RuntimeException(e);
-            }
-        };
-    }
+//    private final int BUFF_SIZE = 32786;
+//
+//    @Bean
+//    CommandLineRunner processXML(IStAXAPIParser osmDataParser, OSMStatistics statistic,
+//                                 @Qualifier("copyService")
+//                                 NodeService userService) {
+//        return args -> {
+//            CommandLineOptionsHandler cmdHandler = new CommandLineOptionsHandler(args);
+//            ((ch.qos.logback.classic.Logger) log).setLevel(Level.ALL);
+//            String filePath = "C:\\Users\\agolovenko\\Downloads\\ural-fed-district-latest.osm.bz2";
+//            try (InputStream in = Files.newInputStream(Paths.get(cmdHandler.getOptionByName("f", filePath)));
+//                 BufferedInputStream bin = new BufferedInputStream(in, BUFF_SIZE);
+//                 BZip2CompressorInputStream bzIn = new BZip2CompressorInputStream(bin)) {
+//
+//                osmDataParser.parseXMLAndWriteToDB(bzIn, userService);
+//                statistic.printOrderedByKeyRepetition();
+//
+//            } catch (ParseException | IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        };
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(OsmApplication.class, args);

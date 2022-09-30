@@ -5,7 +5,7 @@ import com.agolovenko.jspring.OSM.REST.persist.Node;
 import java.util.List;
 
 public interface NodeService {
-    List<Node> getAllUsers();
+    List<Node> getAllNodes();
 
     Node getNode(Long id);
 

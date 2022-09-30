@@ -21,10 +21,10 @@ public class NodeController {
         this.nodeService = nodeService;
     }
 
-    @GetMapping("/{lat}/{lon}/{radix}")
-    ResponseEntity<?> get(@PathVariable(value = "lat") Float lat,
-                          @PathVariable(value = "lon") Float lon,
-                          @PathVariable(value = "radix") Integer radix) {
+    @GetMapping()
+    ResponseEntity<?> get(@RequestParam(name = "lat") Float lat,
+                          @RequestParam(name = "lon") Float lon,
+                          @RequestParam(name = "radix") Integer radix) {
         List<Node> nodes = nodeService.getNodesIntoArea(lat, lon, radix);
         if (!nodes.isEmpty())
             return new ResponseEntity<>(nodes, HttpStatus.OK);
@@ -32,11 +32,11 @@ public class NodeController {
             return new ResponseEntity<>("Nodes near point {" + lat + "," + lon + "} not found.", HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{lat}/{lon}/{amenity}/{distance}")
-    ResponseEntity<?> get(@PathVariable(value = "lat") Float lat,
-                          @PathVariable(value = "lon") Float lon,
-                          @PathVariable(value = "amenity") String amenity,
-                          @PathVariable(value = "distance") Integer distance) {
+    @GetMapping("/")
+    ResponseEntity<?> get(@RequestParam(name = "lat") Float lat,
+                          @RequestParam(name = "lon") Float lon,
+                          @RequestParam(name = "amenity") String amenity,
+                          @RequestParam(name = "distance") Integer distance) {
         List<Node> nodes = nodeService.getNodesByAmenity(lat, lon, amenity, distance);
         if (!nodes.isEmpty())
             return new ResponseEntity<>(nodes, HttpStatus.OK);
@@ -53,26 +53,15 @@ public class NodeController {
         } else {
             return new ResponseEntity<>(node, HttpStatus.OK);
         }
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        List<Tag> participantJsonList;
-//        try {
-//            participantJsonList = objectMapper.readValue(node.getTags(), new TypeReference<>() {
-//            });
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//        if (participantJsonList.size() > 0) {
-//            System.out.println(participantJsonList);
-//        }
     }
 
-    @PostMapping(value = "/nodes")
+    @PostMapping()
     public ResponseEntity<?> create(@RequestBody Node node) {
         nodeService.create(node);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/nodes/{id}")
+    @PutMapping(value = "/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") Long id, @RequestBody Node node) {
         final boolean updated = nodeService.update(node, id);
 
@@ -81,7 +70,7 @@ public class NodeController {
                 : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
-    @DeleteMapping(value = "/nodes/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") Long id) {
         nodeService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -3,23 +3,23 @@ package com.agolovenko.jspring.OSM.DB;
 import com.agolovenko.jspring.osmjaxbclasses.Node;
 
 public interface NodeService extends AutoCloseable {
-    default NodeInfo getNode(Long id) throws UserServiceException {
+    default NodeInfo getNode(Long id) throws NodeServiceException {
         throw new RuntimeException("Operation not implemented");
     }
 
-    default NodeInfo findByNodeId(String userName) throws UserServiceException {
+    default NodeInfo findByNodeId(String userName) throws NodeServiceException {
         throw new RuntimeException("Operation not implemented");
     }
 
-    default void createNode(Node userInfo) throws UserServiceException {
+    default void createNode(Node userInfo) throws NodeServiceException {
         throw new RuntimeException("Operation not implemented");
     }
 
-    default void updateNode(NodeInfo userInfo) throws UserServiceException {
+    default void updateNode(NodeInfo userInfo) throws NodeServiceException {
         throw new RuntimeException("Operation not implemented");
     }
 
-    default void deleteNode(NodeInfo userInfo) throws UserServiceException {
+    default void deleteNode(NodeInfo userInfo) throws NodeServiceException {
         throw new RuntimeException("Operation not implemented");
     }
 

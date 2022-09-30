@@ -42,7 +42,7 @@ public class Node implements Serializable {
     private Float lon;
 
     @Type(type = "jsonb")
-    @Column(name="tags", columnDefinition = "json") // or, json
+    @Column(name="tags", columnDefinition = "json") // or, jsonb
     private String tags;
 
 //    @Formula("(select earth_distance(ll_to_earth(lat, lon), ll_to_earth(0.0,0.0)))")

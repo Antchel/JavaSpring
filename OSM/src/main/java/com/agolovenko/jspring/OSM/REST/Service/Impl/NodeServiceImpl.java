@@ -23,7 +23,7 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     @Transactional
-    public List<Node> getAllUsers() {
+    public List<Node> getAllNodes() {
         ArrayList<Node> nodes = new ArrayList<>();
         nodeRepository.findAll().forEach(nodes::add);
         return nodes;

@@ -1,6 +1,6 @@
 package com.agolovenko.jspring.OSM.DB.DAO;
 
-import com.agolovenko.jspring.OSM.DB.UserServiceException;
+import com.agolovenko.jspring.OSM.DB.NodeServiceException;
 import com.agolovenko.jspring.OSM.TimeTrack.TimeTracker;
 import com.agolovenko.jspring.OSM.Util.Reference;
 import com.agolovenko.jspring.osmjaxbclasses.Node;
@@ -45,7 +45,7 @@ public class NodeStatementServiceDAO extends AbstractNodeServiceDAO implements A
 
     @Override
     @TimeTracker
-    public void createNode(Node nodeInfo) throws UserServiceException {
+    public void createNode(Node nodeInfo) throws NodeServiceException {
         try {
             StringWriter sw = new StringWriter();
             new ObjectMapper().writer().writeValue(sw, nodeInfo.getTag());
@@ -64,7 +64,7 @@ public class NodeStatementServiceDAO extends AbstractNodeServiceDAO implements A
             }
 
         } catch (SQLException | IOException sqlex) {
-            throw new UserServiceException("Can't create node", sqlex);
+            throw new NodeServiceException("Can't create node", sqlex);
         }
     }
 
