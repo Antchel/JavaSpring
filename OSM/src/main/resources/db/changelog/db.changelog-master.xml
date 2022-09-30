@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+    <changeSet id="202208043213" author="Golovenko Anton">
+        <createTable tableName="node">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" primaryKeyName="node_id_pk" />
+            </column>
+            <column name="node_id" type="bigint">
+                <constraints unique="true" uniqueConstraintName="node_name _unq" />
+            </column>
+            <column name="lat" type="real"/>
+            <column name="lon" type="real"/>
+            <column name="tags" type="json"/>
+        </createTable>
+        <sql>
+            ALTER TABLE node SET (autovacuum_enabled = off);
+        </sql>
+    </changeSet>
+    <!--    <include file="202207041704-user_info_data.xml" relativeToChangelogFile="true"/>-->
+</databaseChangeLog>
